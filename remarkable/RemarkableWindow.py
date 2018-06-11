@@ -73,7 +73,7 @@ class RemarkableWindow(Window):
         self.settings = Gtk.Settings.get_default()
 
         self.is_fullscreen = False
-        self.editor_position = 0
+        self.editor_position = 1
         self.homeDir = os.environ['HOME']
         self.path = os.path.join(self.homeDir, ".remarkable/")
         self.settings_path = os.path.join(self.path, "remarkable.settings")
@@ -186,6 +186,18 @@ class RemarkableWindow(Window):
         self.scrolledwindow_live_preview.get_vadjustment().set_lower(1)
 
         self.temp_file_list = []
+
+
+	# make the views in their default positions
+        self.paned.remove(self.scrolledwindow_live_preview)
+        self.paned.remove(self.scrolledwindow_text_view)
+        if self.editor_position == 0:
+            self.paned.add(self.scrolledwindow_text_view)
+            self.paned.add(self.scrolledwindow_live_preview)
+        else:
+            self.paned.add(self.scrolledwindow_live_preview)
+            self.paned.add(self.scrolledwindow_text_view)
+
 
     def on_find_next_button_clicked(self, widget):
         self.findbar.on_find_next_button_clicked(widget)
@@ -330,6 +342,8 @@ class RemarkableWindow(Window):
                 styles.set(styles.solarized_dark)
             elif self.style == "solarized_light":
                 styles.set(styles.solarized_light)
+            elif self.style == "longma":
+                styles.set(styles.longma)
             elif self.style == "custom":
                 styles.set(styles.custom_css)
             else:
@@ -1366,6 +1380,13 @@ class RemarkableWindow(Window):
         self.update_style(self)
         self.update_live_preview(self)
         self.remarkable_settings['style'] = "solarized_light"
+        self.write_settings()
+
+    def on_menuitem_longma_activate(self, widget):
+        styles.set(styles.longma)
+        self.update_style(self)
+        self.update_live_preview(self)
+        self.remarkable_settings['style'] = "longma"
         self.write_settings()
 
     ##Custom CSS
